@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hamrevann – Tomannsboliger i Kristiansand</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:           #F8F6F2;
+      --surface:      #FFFFFF;
+      --text:         #1C211A;
+      --muted:        #596057;
+      --accent:       #3D6B4F;
+      --accent-dark:  #2E5239;
+      --accent-pale:  #EBF2EE;
+      --border:       #DCDBD6;
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --max: 1080px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 17px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1,h2,h3 { font-family: var(--serif); font-weight: normal; line-height: 1.15; }
+    p { color: var(--muted); }
+    a { color: var(--accent); }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    @media (max-width: 520px) { .wrap { padding: 0 14px; } }
+    .sec  { padding: 72px 24px; }
+    @media (max-width: 520px) { .sec  { padding: 52px 14px; } }
+    .sec--white  { background: var(--surface); }
+    .sec--pale   { background: var(--accent-pale); }
+    .sec--dark   { background: var(--accent); }
+
+    .eyebrow {
+      display: block; font-size: 11.5px; font-weight: 700;
+      letter-spacing: .13em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .sec--dark .eyebrow { color: rgba(255,255,255,.6); }
+    .h2 { font-size: clamp(24px,3.8vw,36px); margin-bottom: 20px; }
+    .sec--dark .h2 { color: #fff; }
+
+    .btn {
+      display: inline-block; padding: 14px 30px; border: none; cursor: pointer;
+      font-family: var(--sans); font-size: 15px; font-weight: 600;
+      letter-spacing: .03em; text-decoration: none; border-radius: 3px;
+      transition: background .2s, transform .1s; white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.55); }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+    .hero {
+      position: relative; min-height: 80vh;
+      display: flex; align-items: center;
+      background: #131f15; overflow: hidden;
+    }
+    .hero-img {
+      position: absolute; inset: 0;
+      background-image: url('https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fca4753e162ccd2b5b5.png');
+      background-size: cover; background-position: center 55%;
+      opacity: .72;
+    }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,20,12,.85) 0%, rgba(10,20,12,.55) 35%, rgba(10,20,12,.18) 65%, rgba(10,20,12,.05) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 680px; padding: 60px 24px 28px;
+      margin: 0 auto 0 max(24px, calc(50% - 520px));
+    }
+    @media (max-width: 860px) {
+      .hero-content { margin: 0 auto; text-align: center; }
+      .hero-ctas { justify-content: center !important; }
+    }
+    @media (max-width: 520px) { .hero-content { padding-bottom: 96px; } }
+    .hero-tag {
+      display: inline-block; background: rgba(61,107,79,.65);
+      border: 1px solid rgba(168,201,180,.4);
+      color: #C5DBC9; font-size: 12px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 2px; margin-bottom: 22px;
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5.5vw, 64px);
+      color: #FFFFFF; line-height: 1.08; margin-bottom: 22px;
+      text-shadow: 0 2px 24px rgba(0,0,0,.55), 0 1px 4px rgba(0,0,0,.7);
+    }
+    .hero-title em { font-style: italic; color: #B8D9C1; }
+    .hero-sub {
+      font-size: clamp(15.5px,2vw,18.5px);
+      color: #fff;
+      line-height: 1.6; margin-bottom: 38px; max-width: 500px;
+      text-shadow: 0 1px 3px rgba(0,0,0,.95), 0 2px 16px rgba(0,0,0,.85);
+    }
+    @media (max-width: 860px) { .hero-sub { margin-left: auto; margin-right: auto; } }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-scroll {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      color: rgba(255,255,255,.4); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .hero-scroll::after {
+      content: ''; display: block; width: 1px; height: 32px;
+      background: rgba(255,255,255,.3);
+      animation: sc 2.2s ease-in-out infinite;
+    }
+    @keyframes sc { 0%,100%{opacity:.3;transform:scaleY(1)} 50%{opacity:.8;transform:scaleY(1.25)} }
+
+    .fordel-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 36px; margin-top: 44px;
+    }
+    @media (max-width: 680px) { .fordel-grid { grid-template-columns: 1fr; gap: 28px; } }
+    .fordel { display: flex; flex-direction: column; gap: 10px; }
+    .fordel-icon {
+      width: 44px; height: 44px; background: var(--accent-pale);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .fordel-icon svg { width: 21px; height: 21px; stroke: var(--accent); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .fordel-title { font-family: var(--serif); font-size: 19px; }
+    .fordel p { font-size: 15px; line-height: 1.6; }
+
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      grid-template-rows: 270px 270px; gap: 8px; margin-top: 40px;
+    }
+    @media (max-width: 700px) { .gallery-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: repeat(3, 175px); } }
+    @media (max-width: 420px) { .gallery-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: repeat(3, 140px); } }
+    .gal-item { border-radius: 4px; overflow: hidden; cursor: pointer; position: relative; background: #ccc; }
+    .gal-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+    .gal-item:hover img { transform: scale(1.04); }
+    .gal-item-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; transition: background .3s; }
+    .gal-item:hover .gal-item-overlay { background: rgba(0,0,0,.18); }
+    .gal-zoom-icon { opacity: 0; transition: opacity .3s; width: 40px; height: 40px; background: rgba(255,255,255,.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .gal-item:hover .gal-zoom-icon { opacity: 1; }
+    .gal-zoom-icon svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; }
+    .gal-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(0,0,0,.52)); padding: 24px 12px 10px; font-size: 12px; color: rgba(255,255,255,.88); letter-spacing: .03em; }
+    .gallery-hint { text-align: center; margin-top: 14px; font-size: 13px; color: var(--muted); display: none; }
+    @media (max-width: 700px) { .gallery-hint { display: block; } }
+
+    .lb-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.93); flex-direction: column; align-items: center; justify-content: center; }
+    .lb-overlay.active { display: flex; }
+    .lb-header { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; z-index: 10; }
+    .lb-counter { color: rgba(255,255,255,.6); font-size: 13px; letter-spacing: .05em; }
+    .lb-close { background: none; border: none; cursor: pointer; color: #fff; font-size: 28px; line-height: 1; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; opacity: .8; transition: opacity .2s; }
+    .lb-close:hover { opacity: 1; }
+    .lb-stage { position: relative; width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 80px; }
+    @media (max-width: 600px) { .lb-stage { padding: 60px 16px 80px; } }
+    .lb-img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; border-radius: 3px; user-select: none; -webkit-user-drag: none; }
+    .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); color: #fff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 22px; transition: background .2s; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .lb-nav:hover { background: rgba(255,255,255,.25); }
+    .lb-prev { left: 16px; }
+    .lb-next { right: 16px; }
+    @media (max-width: 480px) { .lb-prev { left: 8px; } .lb-next { right: 8px; } .lb-nav { width: 40px; height: 40px; font-size: 18px; } }
+    .lb-thumbs { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; padding: 12px 16px; background: linear-gradient(transparent, rgba(0,0,0,.6)); }
+    .lb-thumb { width: 44px; height: 32px; border-radius: 2px; overflow: hidden; cursor: pointer; opacity: .5; transition: opacity .2s; flex-shrink: 0; border: 2px solid transparent; }
+    .lb-thumb.active { opacity: 1; border-color: rgba(255,255,255,.8); }
+    .lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @media (max-width: 420px) { .lb-thumb { width: 36px; height: 26px; } }
+
+    .area-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+    @media (max-width: 720px) { .area-grid { grid-template-columns: 1fr; gap: 36px; } }
+    .area-text p { margin-bottom: 14px; font-size: 16px; }
+    .area-text p:last-child { margin-bottom: 0; }
+    .dist-list { list-style: none; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
+    .dist-list li { display: flex; justify-content: space-between; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 14.5px; }
+    .dist-list li:last-child { border-bottom: none; }
+    .dist-val { font-weight: 600; color: var(--accent); font-size: 13.5px; }
+
+    .specs-intro { max-width: 600px; font-size: 16px; margin-bottom: 32px; }
+    .specs-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .spec { background: var(--surface); padding: 22px 24px; display: flex; flex-direction: column; gap: 5px; }
+    .spec-lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+    .spec-val { font-family: var(--serif); font-size: 19px; color: var(--text); }
+    .spec-note { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+    @media (max-width: 540px) {
+      .specs-grid { grid-template-columns: 1fr; background: none; gap: 0; width: 100%; }
+      .spec { flex-direction: row; gap: 10px; align-items: flex-start; padding: 13px 14px; border-bottom: 1px solid var(--border); border-radius: 0; width: 100%; }
+      .spec:first-child { border-radius: 6px 6px 0 0; }
+      .spec:last-child  { border-bottom: none; border-radius: 0 0 6px 6px; }
+      .spec-left { flex: 0 0 120px; min-width: 0; }
+      .spec-val  { font-size: 15.5px; }
+      .spec-note { font-size: 13px; flex: 1; min-width: 0; }
+    }
+
+    .form-lead { max-width: 460px; }
+    .form-lead p { color: rgba(255,255,255,.72); font-size: 16px; margin-top: 10px; }
+    .hl-wrapper { max-width: 640px; margin-top: 36px; background: var(--surface); border-radius: 8px; overflow: hidden; min-height: 540px; }
+    .hl-wrapper iframe { width: 100%; height: 540px; border: none; display: block; }
+    @media (max-width: 520px) { .hl-wrapper { max-width: 100%; margin-left: 0; margin-right: 0; border-radius: 6px; } }
+
+    .finn-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.78); font-size: 14.5px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,.3); padding: 10px 18px; border-radius: 4px; margin-top: 24px; transition: background .2s, color .2s, border-color .2s; }
+    .finn-link:hover { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.6); }
+    .finn-link svg { width: 15px; height: 15px; flex-shrink: 0; stroke: currentColor; }
+
+    .status-bar { background: var(--accent-dark); padding: 13px 24px; }
+    .status-bar__inner { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; font-size: 14px; color: rgba(255,255,255,.88); font-weight: 500; }
+    .status-bar__inner > span:last-child { line-height: 1.55; text-align: center; }
+    .status-bar__dot { width: 8px; height: 8px; background: #8FD4A8; border-radius: 50%; flex-shrink: 0; animation: dotpulse 2.2s ease-in-out infinite; }
+    @keyframes dotpulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(1.4); } }
+
+    .partners-section { background: var(--surface); padding: 64px 24px 56px; border-top: 1px solid var(--border); }
+    .partners-inner { max-width: var(--max); margin: 0 auto; }
+
+    .logo-row { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 56px; }
+    .logo-box { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 0 0 180px; }
+    .logo-placeholder { height: 56px; width: 100%; border: 2px dashed var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 0 14px; background: var(--accent-pale); position: relative; overflow: hidden; }
+    .logo-placeholder::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(61,107,79,.08) 0%, rgba(61,107,79,.03) 100%); }
+    .logo-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .logo-divider { width: 1px; height: 56px; background: var(--border); flex-shrink: 0; margin: 0 28px; }
+    @media (max-width: 520px) { .logo-row { flex-direction: column; gap: 20px; } .logo-box { flex: none; width: 200px; } .logo-divider { display: none; } }
+
+    .agent-row { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
+    .agent-card { display: flex; align-items: flex-start; gap: 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; flex: 1; min-width: 260px; max-width: 380px; }
+    .agent-photo { width: 72px; height: 72px; border-radius: 50%; background: var(--accent-pale); border: 2px solid var(--border); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .agent-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-role { font-size: 10.5px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; display: block; }
+    .agent-name { font-family: var(--serif); font-size: 18px; color: var(--text); margin-bottom: 10px; line-height: 1.2; }
+    .agent-contacts { display: flex; flex-direction: column; gap: 6px; }
+    .agent-contact { display: flex; align-items: center; gap: 8px; font-size: 14.5px; color: var(--text); font-weight: 500; text-decoration: none; transition: color .15s; }
+    .agent-contact:hover { color: var(--accent); }
+    .agent-contact svg { width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .partners-heading { text-align: center; margin-bottom: 40px; }
+    .partners-heading .eyebrow { justify-content: center; display: flex; }
+    .partners-heading .h2 { font-size: clamp(20px,2.8vw,28px); margin-bottom: 0; }
+
+    .inline-cta { margin-top: 44px; }
+    @media (max-width: 640px) {
+      .inline-cta { text-align: center; }
+      .inline-cta .btn { padding: 13px 28px; font-size: 14px; text-align: center; }
+    }
+
+    .consent-note { background: rgba(61,107,79,.1); border: 1px solid rgba(61,107,79,.25); border-radius: 5px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: rgba(255,255,255,.85); line-height: 1.55; }
+
+    .footer { background: #131f15; padding: 28px 24px; text-align: center; }
+    .footer p { color: rgba(255,255,255,.35); font-size: 13px; }
+
+    .sticky-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--accent); padding: 14px; text-align: center; box-shadow: 0 -2px 16px rgba(0,0,0,.25); }
+    .sticky-cta a { color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; letter-spacing: .03em; }
+    @media (max-width: 640px) { .sticky-cta { display: block; } body { padding-bottom: 54px; } }
+  </style>
+</head>
+<body>
+
+<section class="hero" id="toppen">
+  <div class="hero-img" role="img" aria-label="Hamrevann tomannsbolig, kveldsstemning"></div>
+  <div class="hero-gradient" aria-hidden="true"></div>
+  <div class="hero-content">
+    <span class="hero-tag">16 nye tomannsboliger &middot; Nybygg &middot; Kristiansand</span>
+    <h1 class="hero-title">
+      Bo i naturen –<br>
+      <em>ti minutter fra byen</em>
+    </h1>
+    <p class="hero-sub">
+      Tun 2 på Hamrevann rett ved Sørlandsparken er åpnet for salg. Allerede er 2 av 16 boliger solgt. Bo i naturen, rett ved Sørlandsparken, Dyreparken, Hamresanden og flyplass. Moderne standard og bilfritt tun for store og små.
+    </p>
+    <div class="hero-ctas">
+      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
+      <a href="#galleri" class="btn btn-ghost">Se boligene</a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">Scroll</div>
+</section>
+
+<div class="status-bar">
+  <div class="wrap status-bar__inner">
+    <span class="status-bar__dot" aria-hidden="true"></span>
+    <span>Planering av tomtene er i gang. Bygging av de første boligene starter snart.</span>
+  </div>
+</div>
+
+<section class="sec sec--white" id="fordeler">
+  <div class="wrap">
+    <span class="eyebrow">Hvorfor Hamrevann</span>
+    <h2 class="h2">Derfor er Hamrevann perfekt for barnefamilier</h2>
+    <div class="fordel-grid">
+      <div class="fordel">
+        <div class="fordel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 7 4 2 5M12 12C12 7 17 4 22 5"/><path d="M5 20c2-2 4-4 7-8M19 20c-2-2-4-4-7-8"/></svg>
+        </div>
+        <h3 class="fordel-title">Friluftsliv rett utenfor døren</h3>
+        <p>Hamrevann har sin egen naturpark med turløyper, gapahuker og griller. Barna kan utforske, klatre og leke i skogens naturlige omgivelser. Dette er hverdagsgevinst i praksis.</p>
+      </div>
+      <div class="fordel">
+        <div class="fordel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        </div>
+        <h3 class="fordel-title">Alt du trenger i nærheten</h3>
+        <p>Ny skole med idrettshall og ny matbutikk bygges rett ved boligene. Med ny turvei får du bare 600 meter å sykle eller gå til Sørlandsparken. Dyreparken, Kjevik og Hamresanden ligger få minutter unna. Og bare ti minutter til Kristiansand sentrum.</p>
+      </div>
+      <div class="fordel">
+        <div class="fordel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        </div>
+        <h3 class="fordel-title">Trygt og praktisk for hele familien</h3>
+        <p>3–4 soverom gir god plass til hele familien. Det bilfrie tunet er barnas lekeområde rett utenfor døren – trygt og uten biltrafikk.</p>
+      </div>
+    </div>
+    <div class="inline-cta">
+      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="galleri">
+  <div class="wrap">
+    <span class="eyebrow">Galleri</span>
+    <h2 class="h2">Se boligene</h2>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gal-item" data-index="0" tabindex="0" role="button" aria-label="Åpne bilde: Oversikt">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fcacaf24b80a0e46354.png" alt="Oversikt – Hamrevann boligfelt" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Oversikt</div>
+      </div>
+      <div class="gal-item" data-index="1" tabindex="0" role="button" aria-label="Åpne bilde: Fasade">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fca02cd38b17c31ba04.png" alt="Fasade – Hamrevann tomannsboliger" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Fasade</div>
+      </div>
+      <div class="gal-item" data-index="2" tabindex="0" role="button" aria-label="Åpne bilde: Uteområde">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fcacaf24b80a0e46356.png" alt="Uteområde – Hamrevann" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Uteområde</div>
+      </div>
+      <div class="gal-item" data-index="3" tabindex="0" role="button" aria-label="Åpne bilde: Stue og kjøkken">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fca376904eac217a588.png" alt="Stue og kjøkken – Hamrevann bolig" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Stue og kjøkken</div>
+      </div>
+      <div class="gal-item" data-index="4" tabindex="0" role="button" aria-label="Åpne bilde: Stue">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fcacaf24b80a0e46361.png" alt="Stue – Hamrevann bolig" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Stue</div>
+      </div>
+      <div class="gal-item" data-index="5" tabindex="0" role="button" aria-label="Åpne bilde: Kjøkken">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dd0fca4753e162ccd2b5ba.png" alt="Kjøkken – Hamrevann bolig" loading="lazy" />
+        <div class="gal-item-overlay"><div class="gal-zoom-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+        <div class="gal-caption">Kjøkken</div>
+      </div>
+    </div>
+    <p class="gallery-hint">Trykk på et bilde for fullskjermvisning</p>
+  </div>
+</section>
+
+<div class="lb-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Bildevisning">
+  <div class="lb-header">
+    <span class="lb-counter" id="lbCounter">1 / 6</span>
+    <button class="lb-close" id="lbClose" aria-label="Lukk bildevisning">&times;</button>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Forrige bilde">&#8249;</button>
+    <img class="lb-img" id="lbImg" src="" alt="" />
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Neste bilde">&#8250;</button>
+  </div>
+  <div class="lb-thumbs" id="lbThumbs" aria-label="Bildeoversikt"></div>
+</div>
+
+<section class="sec sec--white" id="omraade">
+  <div class="wrap">
+    <div class="area-grid">
+      <div class="area-text">
+        <span class="eyebrow">Beliggenhet</span>
+        <h2 class="h2">Midt mellom natur og by</h2>
+      </div>
+      <div>
+        <ul class="dist-list" aria-label="Avstander fra Hamrevann">
+          <li><span>Kristiansand sentrum</span><span class="dist-val">ca. 10 km</span></li>
+          <li><span>Hamresanden badestrand med bil</span><span class="dist-val">ca. 8 min</span></li>
+          <li><span>Sørlandsparken gange</span><span class="dist-val">ca. 10 min</span></li>
+          <li><span>Dyreparken gange (fremtidig tursti)</span><span class="dist-val">ca. 20 min</span></li>
+          <li><span>Bussmetro M2 til Kristiansand sentrum</span><span class="dist-val">ca. 29 min</span></li>
+          <li><span>E18</span><span class="dist-val">Kort vei</span></li>
+          <li><span>Ny skole med idrettshall</span><span class="dist-val">Rett ved feltet</span></li>
+          <li><span>Ny matbutikk</span><span class="dist-val">Rett ved feltet</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="inline-cta">
+      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--pale" id="boligene">
+  <div class="wrap">
+    <span class="eyebrow">Spesifikasjoner</span>
+    <h2 class="h2">Hva får du på Hamrevann?</h2>
+    <p class="specs-intro">16 vertikaltdelte tomannsboliger med moderne planløsning, store vinduer og private og felles utearealer.</p>
+    <div class="specs-grid">
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Boligtype</span><div class="spec-val">Tomannsbolig</div></div><span class="spec-note">Vertikaldelt – to etasjer, eget inngangsparti</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Antall boliger</span><div class="spec-val">16 enheter</div></div><span class="spec-note">Organisert i bilfritt tun</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Størrelse</span><div class="spec-val">94–112 m²</div></div><span class="spec-note">Bruksareal</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Soverom</span><div class="spec-val">3–4 soverom</div></div><span class="spec-note">Tilpasset barnefamilier og par</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Prisintervall</span><div class="spec-val">Fra 5,5 mill.</div></div><span class="spec-note">Ca. 5,5–6,0 mill. kr avhengig av enhet</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Standard</span><div class="spec-val">Moderne leveranse</div></div><span class="spec-note">Kvalitetskjøkken, flislagte bad, gode gulvløsninger</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Oppvarming</span><div class="spec-val">Energieffektivt</div></div><span class="spec-note">Bærekraftig – lave driftskostnader</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Parkering</span><div class="spec-val">Inkludert</div></div><span class="spec-note">Parkeringsplass med mulighet for elbil-lading</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Uteareal</span><div class="spec-val">Privat hage</div></div><span class="spec-note">Eget uterom + bilfritt fellesareal</span></div>
+      <div class="spec"><div class="spec-left"><span class="spec-lbl">Nærskole</span><div class="spec-val">Rett ved feltet</div></div><span class="spec-note">Idrettshall, fotballbane og mange aktiviteter</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--dark" id="registrering">
+  <div class="wrap">
+    <div class="form-lead">
+      <span class="eyebrow">Ta kontakt</span>
+      <h2 class="h2">Interessert i Hamrevann?</h2>
+      <p>Fyll inn skjemaet så følger meglerne dine opp direkte.</p>
+    </div>
+    <div class="consent-note">
+      Ved innsendelse av dette skjema samtykker jeg til at Eiendomsmegler Norge kan kontakte meg på e-post og/eller telefon.
+    </div>
+    <div class="hl-wrapper">
+      <iframe
+        id="hl-iframe"
+        data-real-src="https://api.leadconnectorhq.com/widget/form/BeBP3aJvOFUJBWAmoVAt"
+        data-layout="{'id':'INLINE'}"
+        data-trigger-type="alwaysShow"
+        data-trigger-value=""
+        data-activation-type="alwaysActivated"
+        data-activation-value=""
+        data-deactivation-type="neverDeactivate"
+        data-deactivation-value=""
+        data-form-name="Hamrevann"
+        data-height="532"
+        data-layout-iframe-id="inline-BeBP3aJvOFUJBWAmoVAt"
+        data-form-id="BeBP3aJvOFUJBWAmoVAt"
+        style="width:100%;height:540px;border:none;display:block"
+        title="Hamrevann kontaktskjema"
+        tabindex="-1"
+      ></iframe>
+    </div>
+  </div>
+  <div class="wrap">
+    <a href="https://www.finn.no/realestate/project/ad.html?finnkode=432186722&ci=17"
+       target="_blank" rel="noopener noreferrer" class="finn-link">
+      <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3H17V9"/><path d="M17 3L9 11"/><path d="M9 5H4a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1v-5"/></svg>
+      Se fullstendig annonse på Finn.no
+    </a>
+  </div>
+</section>
+
+<section class="partners-section">
+  <div class="partners-inner">
+    <div class="partners-heading">
+      <span class="eyebrow">Samarbeidspartnere</span>
+    </div>
+    <div class="logo-row">
+      <div class="logo-box">
+        <div class="logo-placeholder">
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff1bd109243d2cc18d1ce.png" alt="Konsmo Fabrikker" style="max-height:40px;max-width:100%;object-fit:contain;display:block;" />
+        </div>
+        <span class="logo-label">Utbygger</span>
+      </div>
+      <div class="logo-divider" aria-hidden="true"></div>
+      <div class="logo-box">
+        <div class="logo-placeholder">
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff16c2b7a6ecd79e27a3f.webp" alt="Eiendomsmegler Norge" style="max-height:40px;max-width:100%;object-fit:contain;display:block;" />
+        </div>
+        <span class="logo-label">Megler</span>
+      </div>
+    </div>
+    <div class="partners-heading">
+      <span class="eyebrow">Kontakt meglerne</span>
+      <h2 class="h2">Vi hjelper deg gjerne</h2>
+    </div>
+    <div class="agent-row">
+      <div class="agent-card">
+        <div class="agent-photo">
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff2b0190683601a76dc89.jpg" alt="Tor Even Kristensen" />
+        </div>
+        <div class="agent-info">
+          <span class="agent-role">Eiendomsmegler Norge</span>
+          <div class="agent-name">Tor Even Kristensen</div>
+          <div class="agent-contacts">
+            <a href="tel:48252012" class="agent-contact">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              48 25 20 12
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-photo">
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff254109243d2cc18f528.jpg" alt="Audun Remesvik" />
+        </div>
+        <div class="agent-info">
+          <span class="agent-role">Eiendomsmegler Norge</span>
+          <div class="agent-name">Audun Remesvik</div>
+          <div class="agent-contacts">
+            <a href="tel:+4795238976" class="agent-contact">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              +47 952 38 976
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>Hamrevann &mdash; Future Green Group &mdash; Gullvingeveien, Kristiansand</p>
+</footer>
+
+<div class="sticky-cta" id="stickyCta">
+  <a href="#registrering">Meld interesse &rarr;</a>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var items    = Array.from(document.querySelectorAll('.gal-item'));
+  var overlay  = document.getElementById('lightbox');
+  var lbImg    = document.getElementById('lbImg');
+  var lbCounter= document.getElementById('lbCounter');
+  var lbThumbs = document.getElementById('lbThumbs');
+  var current  = 0;
+  var total    = items.length;
+
+  items.forEach(function (item, i) {
+    var src = item.querySelector('img').src;
+    var alt = item.querySelector('img').alt;
+    var th  = document.createElement('div');
+    th.className = 'lb-thumb' + (i === 0 ? ' active' : '');
+    th.setAttribute('data-i', i);
+    th.setAttribute('role', 'button');
+    th.setAttribute('tabindex', '0');
+    th.setAttribute('aria-label', 'Vis bilde ' + (i + 1));
+    var img = document.createElement('img');
+    img.src = src; img.alt = alt;
+    th.appendChild(img);
+    lbThumbs.appendChild(th);
+  });
+
+  function openLB(index) {
+    current = ((index % total) + total) % total;
+    var src  = items[current].querySelector('img').src;
+    var alt  = items[current].querySelector('img').alt;
+    lbImg.src = src;
+    lbImg.alt = alt;
+    lbCounter.textContent = (current + 1) + ' / ' + total;
+    document.querySelectorAll('.lb-thumb').forEach(function (t, i) {
+      t.classList.toggle('active', i === current);
+    });
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('lbClose').focus();
+  }
+
+  function closeLB() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    items[current].focus();
+  }
+
+  function go(dir) { openLB(current + dir); }
+
+  items.forEach(function (item) {
+    item.addEventListener('click',   function () { openLB(+this.dataset.index); });
+    item.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLB(+this.dataset.index); }
+    });
+  });
+
+  document.getElementById('lbClose').addEventListener('click', closeLB);
+  document.getElementById('lbPrev').addEventListener('click',  function () { go(-1); });
+  document.getElementById('lbNext').addEventListener('click',  function () { go(+1); });
+
+  lbThumbs.addEventListener('click', function (e) {
+    var th = e.target.closest('.lb-thumb');
+    if (th) openLB(+th.dataset.i);
+  });
+
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeLB();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!overlay.classList.contains('active')) return;
+    if (e.key === 'Escape')     closeLB();
+    if (e.key === 'ArrowLeft')  go(-1);
+    if (e.key === 'ArrowRight') go(+1);
+  });
+
+  var touchX = null;
+  overlay.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+  overlay.addEventListener('touchend', function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+    touchX = null;
+  }, { passive: true });
+
+  var cta     = document.getElementById('stickyCta');
+  var formSec = document.getElementById('registrering');
+  if (cta && formSec && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        cta.style.display = e.isIntersecting ? 'none' : '';
+      });
+    }, { threshold: 0.1 }).observe(formSec);
+  }
+
+  var hlIframe = document.getElementById('hl-iframe');
+  var hlLoaded = false;
+
+  function loadHL() {
+    if (hlLoaded || !hlIframe) return;
+    hlLoaded = true;
+    hlIframe.src = hlIframe.dataset.realSrc;
+    var s = document.createElement('script');
+    s.src = 'https://link.msgsndr.com/js/form_embed.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }
+
+  if (hlIframe) {
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries, obs) {
+        if (entries[0].isIntersecting) { loadHL(); obs.disconnect(); }
+      }, { rootMargin: '300px 0px' }).observe(hlIframe);
+    } else {
+      setTimeout(loadHL, 1500);
+    }
+  }
+}());
+</script>
+
+</body>
+</html>
