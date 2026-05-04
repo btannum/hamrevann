@@ -325,11 +325,12 @@
     .film-mask-tr { position: absolute; top: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
     .film-mask-br { position: absolute; bottom: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
     .film-btn {
-      position: absolute; bottom: 16px; z-index: 4;
+      position: absolute; bottom: 16px; z-index: 6;
       width: 44px; height: 44px; border-radius: 50%; border: none;
-      background: rgba(0,0,0,.55); backdrop-filter: blur(6px); color: #fff;
+      background: rgba(0,0,0,.6); backdrop-filter: blur(6px); color: #fff;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: background .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(0,0,0,.35);
     }
     .film-btn:hover { background: rgba(61,107,79,.9); transform: scale(1.06); }
     .film-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -783,6 +784,7 @@
   var filmPoster = document.getElementById('filmPoster');
   var filmLoaded = false;
   var filmMuted  = true;
+  var filmPlaying = false;
 
   function loadFilm() {
     if (filmLoaded || !filmVid) return;
@@ -826,13 +828,25 @@
     setSoundUI(nextOn);
   }
 
+  function togglePlay() {
+    if (!filmLoaded) {
+      loadFilm();
+      if (filmPoster) filmPoster.classList.add('is-hidden');
+      var go = function () { ytCmd('playVideo'); };
+      if (filmVid && filmVid.src && filmVid.src !== 'about:blank') setTimeout(go, 60);
+      else filmVid.addEventListener('load', function () { setTimeout(go, 200); }, { once: true });
+      return;
+    }
+    ytCmd(filmPlaying ? 'pauseVideo' : 'playVideo');
+  }
+
   if (filmVid) {
     if (document.readyState !== 'loading') loadFilm();
     else document.addEventListener('DOMContentLoaded', loadFilm);
   }
   if (filmPoster) filmPoster.addEventListener('click', startWithSound);
   if (filmSound)  filmSound.addEventListener('click', function (e) { e.stopPropagation(); toggleSound(); });
-  if (filmShield) filmShield.addEventListener('click', toggleSound);
+  if (filmShield) filmShield.addEventListener('click', togglePlay);
 
   var filmFs    = document.getElementById('filmFs');
   var filmFrame = document.querySelector('.film-frame');
@@ -893,8 +907,9 @@
     if (typeof e.data !== 'string' || e.origin.indexOf('youtube') === -1) return;
     try {
       var d = JSON.parse(e.data);
-      if (d.event === 'onStateChange' && d.info === 1 && filmPoster) {
-        filmPoster.classList.add('is-hidden');
+      if (d.event === 'onStateChange') {
+        filmPlaying = (d.info === 1);
+        if (d.info === 1 && filmPoster) filmPoster.classList.add('is-hidden');
       }
     } catch (_) {}
   });
