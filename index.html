@@ -47,15 +47,25 @@
     .sec--dark .h2 { color: #fff; }
 
     .btn {
-      display: inline-block; padding: 14px 30px; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 30px; border: none; cursor: pointer;
       font-family: var(--sans); font-size: 15px; font-weight: 600;
       letter-spacing: .03em; text-decoration: none; border-radius: 3px;
       transition: background .2s, transform .1s; white-space: nowrap;
     }
+    .btn svg { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
     .btn-ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.55); }
     .btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+    .btn-hero-light { background: #fff; color: var(--accent-dark); }
+    .btn-hero-light:hover { background: #f5f5f0; transform: translateY(-1px); }
+    .btn-hero-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.6); }
+    .btn-hero-outline:hover { background: rgba(255,255,255,.12); }
+    .hero-ctas-stack { display: flex; flex-direction: column; gap: 12px; max-width: 460px; }
+    .hero-ctas-stack .btn { width: 100%; padding: 16px 24px; font-size: 15.5px; }
+    @media (max-width: 860px) { .hero-ctas-stack { margin-left: auto; margin-right: auto; } }
 
     .hero {
       position: relative; min-height: 80vh;
@@ -195,8 +205,8 @@
 
     .form-lead { max-width: 460px; }
     .form-lead p { color: rgba(255,255,255,.72); font-size: 16px; margin-top: 10px; }
-    .hl-wrapper { max-width: 640px; margin-top: 36px; background: var(--surface); border-radius: 8px; overflow: hidden; min-height: 540px; }
-    .hl-wrapper iframe { width: 100%; height: 540px; border: none; display: block; }
+    .hl-wrapper { max-width: 640px; margin-top: 36px; background: var(--surface); border-radius: 8px; overflow: hidden; min-height: 708px; }
+    .hl-wrapper iframe { width: 100%; height: 708px; border: none; display: block; border-radius: 3px; }
     @media (max-width: 520px) { .hl-wrapper { max-width: 100%; margin-left: 0; margin-right: 0; border-radius: 6px; } }
 
     .finn-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.78); font-size: 14.5px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,.3); padding: 10px 18px; border-radius: 4px; margin-top: 24px; transition: background .2s, color .2s, border-color .2s; }
@@ -249,6 +259,23 @@
     .sticky-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--accent); padding: 14px; text-align: center; box-shadow: 0 -2px 16px rgba(0,0,0,.25); }
     .sticky-cta a { color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; letter-spacing: .03em; }
     @media (max-width: 640px) { .sticky-cta { display: block; } body { padding-bottom: 54px; } }
+
+    .visit-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center; }
+    @media (max-width: 720px) { .visit-grid { grid-template-columns: 1fr; gap: 28px; } }
+    .visit-text p { margin-bottom: 14px; font-size: 16px; }
+    .visit-map { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
+    .visit-map img { width: 100%; height: auto; display: block; }
+    .visit-meta { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; font-size: 14.5px; color: var(--muted); }
+    .visit-meta strong { color: var(--text); font-weight: 600; }
+
+    .prospekt-download { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); color: var(--accent); padding: 11px 18px; border-radius: 4px; font-weight: 600; font-size: 14.5px; text-decoration: none; margin-top: 16px; transition: background .15s; }
+    .prospekt-download:hover { background: #fff; }
+    .prospekt-download svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+    .footer-finn { background: #131f15; padding: 28px 24px; text-align: center; }
+    .footer-finn a { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 13.5px; text-decoration: none; transition: color .15s; }
+    .footer-finn a:hover { color: rgba(255,255,255,.9); }
+    .footer-finn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
   </style>
 </head>
 <body>
@@ -263,11 +290,17 @@
       <em>ti minutter fra byen</em>
     </h1>
     <p class="hero-sub">
-      Tun 2 på Hamrevann rett ved Sørlandsparken er åpnet for salg. Allerede er 2 av 16 boliger solgt. Bo i naturen, rett ved Sørlandsparken, Dyreparken, Hamresanden og flyplass. Moderne standard og bilfritt tun for store og små.
+      Hamrevann er et helt nytt boligområde med 280 boliger i naturskjønne omgivelser. Nå er 16 rekkehus med 3–4 soverom i salg, 3 er solgt. Priser fra 5,5 MNOK med innflytting høst 2026.
     </p>
-    <div class="hero-ctas">
-      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
-      <a href="#galleri" class="btn btn-ghost">Se boligene</a>
+    <div class="hero-ctas-stack">
+      <a href="#registrering" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Meld interesse og last ned prospekt
+      </a>
+      <a href="#besok" class="btn btn-hero-outline">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Besøk oss på Sørlandssenteret
+      </a>
     </div>
   </div>
   <div class="hero-scroll" aria-hidden="true">Scroll</div>
@@ -308,7 +341,7 @@
       </div>
     </div>
     <div class="inline-cta">
-      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
+      <a href="#registrering" class="btn btn-primary">Meld interesse og last ned prospekt</a>
     </div>
   </div>
 </section>
@@ -387,7 +420,7 @@
       </div>
     </div>
     <div class="inline-cta">
-      <a href="#registrering" class="btn btn-primary">Meld interesse – få mer informasjon</a>
+      <a href="#registrering" class="btn btn-primary">Meld interesse og last ned prospekt</a>
     </div>
   </div>
 </section>
@@ -412,15 +445,31 @@
   </div>
 </section>
 
+<section class="sec sec--white" id="besok">
+  <div class="wrap">
+    <div class="visit-grid">
+      <div class="visit-text">
+        <span class="eyebrow">Besøk oss</span>
+        <h2 class="h2">Stikk innom på Sørlandssenteret</h2>
+        <p>Vi har egen salgsbod i 2. etasje på Sørlandssenteret, ved siden av H&amp;M. Kom innom for en uforpliktende prat – vi viser planløsninger, kart over feltet og svarer på alt du lurer på.</p>
+        <div class="visit-meta">
+          <span><strong>Adresse:</strong> Sørlandssenteret, 2. etasje (ved H&amp;M)</span>
+          <span><strong>Kontakt:</strong> Olav Jarle Dyngeland · 459 64 105</span>
+        </div>
+      </div>
+      <div class="visit-map">
+        <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69f87be2704b04a49a002ad2.png" alt="Kart over Sørlandssenteret som viser Hamrevann-boden i 2. etasje ved H&amp;M" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="sec sec--dark" id="registrering">
   <div class="wrap">
     <div class="form-lead">
       <span class="eyebrow">Ta kontakt</span>
-      <h2 class="h2">Interessert i Hamrevann?</h2>
-      <p>Fyll inn skjemaet så følger meglerne dine opp direkte.</p>
-    </div>
-    <div class="consent-note">
-      Ved innsendelse av dette skjema samtykker jeg til at Eiendomsmegler Norge kan kontakte meg på e-post og/eller telefon.
+      <h2 class="h2">Meld interesse og last ned prospekt</h2>
+      <p>Fyll inn skjemaet under – du får tilsendt prospektet på e-post med en gang.</p>
     </div>
     <div class="hl-wrapper">
       <iframe
@@ -434,21 +483,14 @@
         data-deactivation-type="neverDeactivate"
         data-deactivation-value=""
         data-form-name="Hamrevann"
-        data-height="532"
+        data-height="708"
         data-layout-iframe-id="inline-BeBP3aJvOFUJBWAmoVAt"
         data-form-id="BeBP3aJvOFUJBWAmoVAt"
-        style="width:100%;height:540px;border:none;display:block"
-        title="Hamrevann kontaktskjema"
+        style="width:100%;height:708px;border:none;border-radius:3px;display:block"
+        title="Hamrevann"
         tabindex="-1"
       ></iframe>
     </div>
-  </div>
-  <div class="wrap">
-    <a href="https://www.finn.no/realestate/project/ad.html?finnkode=432186722&ci=17"
-       target="_blank" rel="noopener noreferrer" class="finn-link">
-      <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3H17V9"/><path d="M17 3L9 11"/><path d="M9 5H4a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1v-5"/></svg>
-      Se fullstendig annonse på Finn.no
-    </a>
   </div>
 </section>
 
@@ -477,44 +519,25 @@
       </div>
     </div>
     <div class="partners-heading">
-      <span class="eyebrow">Kontakt meglerne</span>
+      <span class="eyebrow">Kontakt</span>
       <h2 class="h2">Vi hjelper deg gjerne</h2>
     </div>
     <div class="agent-row">
       <div class="agent-card">
         <div class="agent-photo">
-          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff2b0190683601a76dc89.jpg" alt="Tor Even Kristensen" />
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69f87b8ed63b4b9e6f4053f7.jpeg" alt="Olav Jarle Dyngeland" />
         </div>
         <div class="agent-info">
-          <span class="agent-role">Eiendomsmegler Norge</span>
-          <div class="agent-name">Tor Even Kristensen</div>
+          <span class="agent-role">Kontaktperson · Hamrevann</span>
+          <div class="agent-name">Olav Jarle Dyngeland</div>
           <div class="agent-contacts">
-            <a href="tel:48252012" class="agent-contact">
+            <a href="tel:+4745964105" class="agent-contact">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-              48 25 20 12
+              459 64 105
             </a>
-            <a href="mailto:tor.kristensen@emnorge.no" class="agent-contact">
+            <a href="mailto:olav@hamrevann.no" class="agent-contact">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-              tor.kristensen@emnorge.no
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="agent-card">
-        <div class="agent-photo">
-          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff254109243d2cc18f528.jpg" alt="Audun Remesvik" />
-        </div>
-        <div class="agent-info">
-          <span class="agent-role">Eiendomsmegler Norge</span>
-          <div class="agent-name">Audun Remesvik</div>
-          <div class="agent-contacts">
-            <a href="tel:+4795238976" class="agent-contact">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-              +47 952 38 976
-            </a>
-            <a href="mailto:Audun.Remesvik@emnorge.no" class="agent-contact">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-              Audun.Remesvik@emnorge.no
+              olav@hamrevann.no
             </a>
           </div>
         </div>
@@ -522,6 +545,13 @@
     </div>
   </div>
 </section>
+
+<footer class="footer-finn">
+  <a href="https://www.finn.no/realestate/project/ad.html?finnkode=432186722&ci=17" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 3H17V9"/><path d="M17 3L9 11"/><path d="M9 5H4a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1v-5"/></svg>
+    Se fullstendig annonse på Finn.no
+  </a>
+</footer>
 
 
 <div class="sticky-cta" id="stickyCta">
