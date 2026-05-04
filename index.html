@@ -299,28 +299,6 @@
       border: 1px solid rgba(255,255,255,.08);
     }
     .film-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; pointer-events: none; }
-    .film-poster {
-      position: absolute; inset: 0; z-index: 5;
-      cursor: pointer; transition: opacity .5s ease;
-      background: #000; border: none; padding: 0;
-    }
-    .film-poster.is-hidden { opacity: 0; pointer-events: none; }
-    .film-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-    .film-poster::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,.05) 0%, rgba(0,0,0,.45) 100%);
-    }
-    .film-play {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 84px; height: 84px; border-radius: 50%;
-      background: rgba(255,255,255,.95);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 12px 32px rgba(0,0,0,.55);
-      transition: transform .2s, background .2s;
-    }
-    .film-poster:hover .film-play { transform: translate(-50%, -50%) scale(1.08); background: #fff; }
-    .film-play svg { width: 28px; height: 28px; fill: var(--accent-dark); margin-left: 5px; }
     .film-shield { position: absolute; inset: 0; cursor: pointer; background: transparent; z-index: 2; }
     .film-mask-tr { position: absolute; top: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
     .film-mask-br { position: absolute; bottom: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
@@ -358,8 +336,6 @@
       .film-btn  { width: 38px; height: 38px; bottom: 10px; }
       .film-sound { right: 10px; }
       .film-fs    { right: 56px; }
-      .film-play { width: 64px; height: 64px; }
-      .film-play svg { width: 22px; height: 22px; }
     }
 
     .footer-finn { background: #131f15; padding: 28px 24px; text-align: center; }
@@ -419,12 +395,6 @@
         allow="autoplay; encrypted-media; picture-in-picture"
         tabindex="-1"
       ></iframe>
-      <button class="film-poster" id="filmPoster" type="button" aria-label="Spill av video">
-        <img src="https://img.youtube.com/vi/HzZXGZ_lvQw/maxresdefault.jpg" alt="" loading="eager" />
-        <span class="film-play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </span>
-      </button>
       <div class="film-shield" id="filmShield" aria-hidden="true"></div>
       <div class="film-mask-tr" aria-hidden="true"></div>
       <div class="film-mask-br" aria-hidden="true"></div>
@@ -781,7 +751,6 @@
   var filmVid    = document.getElementById('filmVideo');
   var filmShield = document.getElementById('filmShield');
   var filmSound  = document.getElementById('filmSound');
-  var filmPoster = document.getElementById('filmPoster');
   var filmLoaded = false;
   var filmMuted  = true;
   var filmPlaying = false;
@@ -794,6 +763,7 @@
       try {
         filmVid.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'filmVideo', channel: 'widget' }), '*');
       } catch (_) {}
+      setTimeout(function () { filmPlaying = true; }, 800);
     }, { once: true });
   }
 
@@ -808,23 +778,7 @@
     filmSound.setAttribute('aria-label', on ? 'Slå av lyd' : 'Slå på lyd');
   }
 
-  function startWithSound() {
-    loadFilm();
-    var go = function () {
-      ytCmd('playVideo');
-      ytCmd('unMute');
-      setSoundUI(true);
-      if (filmPoster) filmPoster.classList.add('is-hidden');
-    };
-    if (filmVid && filmVid.src && filmVid.src !== 'about:blank') {
-      setTimeout(go, 60);
-    } else {
-      filmVid.addEventListener('load', function () { setTimeout(go, 200); }, { once: true });
-    }
-  }
-
   function toggleSound() {
-    if (!filmLoaded) { startWithSound(); return; }
     var nextOn = filmMuted;
     ytCmd(nextOn ? 'unMute' : 'mute');
     setSoundUI(nextOn);
@@ -833,7 +787,6 @@
   function togglePlay() {
     if (!filmLoaded) {
       loadFilm();
-      if (filmPoster) filmPoster.classList.add('is-hidden');
       var go = function () { ytCmd('playVideo'); filmPlaying = true; };
       if (filmVid && filmVid.src && filmVid.src !== 'about:blank') setTimeout(go, 60);
       else filmVid.addEventListener('load', function () { setTimeout(go, 200); }, { once: true });
@@ -847,7 +800,6 @@
     if (document.readyState !== 'loading') loadFilm();
     else document.addEventListener('DOMContentLoaded', loadFilm);
   }
-  if (filmPoster) filmPoster.addEventListener('click', startWithSound);
   if (filmSound)  filmSound.addEventListener('click', function (e) { e.stopPropagation(); toggleSound(); });
   if (filmShield) filmShield.addEventListener('click', togglePlay);
 
@@ -893,7 +845,6 @@
       else exitFallbackFs();
       return;
     }
-    if (filmPoster && !filmPoster.classList.contains('is-hidden')) filmPoster.classList.add('is-hidden');
     loadFilm();
     setTimeout(function () { ytCmd('playVideo'); }, 60);
     if (!enterNativeFs()) enterFallbackFs();
@@ -918,7 +869,6 @@
       }
       if (state !== null) {
         filmPlaying = (state === 1);
-        if (state === 1 && filmPoster) filmPoster.classList.add('is-hidden');
       }
     } catch (_) {}
   });
