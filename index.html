@@ -219,10 +219,14 @@
     .finn-link:hover { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.6); }
     .finn-link svg { width: 15px; height: 15px; flex-shrink: 0; stroke: currentColor; }
 
-    .status-bar { background: var(--accent-dark); padding: 13px 24px; }
-    .status-bar__inner { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; font-size: 14px; color: rgba(255,255,255,.88); font-weight: 500; }
-    .status-bar__inner > span:last-child { line-height: 1.55; text-align: center; }
+    .status-bar { background: var(--accent-dark); padding: 13px 14px; }
+    .status-bar__inner { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; font-size: clamp(11.5px, 3vw, 14px); color: rgba(255,255,255,.88); font-weight: 500; }
+    .status-bar__inner > span:last-child { line-height: 1.4; text-align: center; white-space: nowrap; }
     .status-bar__dot { width: 8px; height: 8px; background: #8FD4A8; border-radius: 50%; flex-shrink: 0; animation: dotpulse 2.2s ease-in-out infinite; }
+    @media (max-width: 380px) {
+      .status-bar { padding: 11px 8px; }
+      .status-bar__inner { gap: 7px; }
+    }
     @keyframes dotpulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(1.4); } }
 
     .partners-section { background: var(--surface); padding: 64px 24px 56px; border-top: 1px solid var(--border); }
@@ -278,6 +282,44 @@
     .prospekt-download:hover { background: #fff; }
     .prospekt-download svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
+    .film-section { background: #131f15; padding: 80px 24px; position: relative; overflow: hidden; }
+    .film-section::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(61,107,79,.28) 0%, rgba(19,31,21,0) 60%);
+      pointer-events: none;
+    }
+    .film-inner { max-width: 1180px; margin: 0 auto; position: relative; }
+    .film-head { text-align: center; margin-bottom: 38px; }
+    .film-head .eyebrow { color: rgba(168,201,180,.85); }
+    .film-head .h2 { color: #fff; font-size: clamp(26px,4vw,40px); margin-bottom: 12px; }
+    .film-head p { color: rgba(255,255,255,.65); font-size: 16px; max-width: 560px; margin: 0 auto; }
+    .film-frame {
+      position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
+      background: #000; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 8px 22px rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .film-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; pointer-events: none; }
+    .film-shield { position: absolute; inset: 0; cursor: pointer; background: transparent; z-index: 2; }
+    .film-mask-tr { position: absolute; top: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
+    .film-mask-br { position: absolute; bottom: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
+    .film-sound {
+      position: absolute; bottom: 16px; right: 16px; z-index: 4;
+      width: 44px; height: 44px; border-radius: 50%; border: none;
+      background: rgba(0,0,0,.55); backdrop-filter: blur(6px); color: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s;
+    }
+    .film-sound:hover { background: rgba(61,107,79,.9); transform: scale(1.06); }
+    .film-sound svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .film-sound .icon-on { display: none; }
+    .film-sound.is-on .icon-on { display: block; }
+    .film-sound.is-on .icon-off { display: none; }
+    @media (max-width: 520px) {
+      .film-section { padding: 56px 14px; }
+      .film-frame { border-radius: 8px; }
+      .film-sound { width: 38px; height: 38px; bottom: 10px; right: 10px; }
+    }
+
     .footer-finn { background: #131f15; padding: 28px 24px; text-align: center; }
     .footer-finn a { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 13.5px; text-decoration: none; transition: color .15s; }
     .footer-finn a:hover { color: rgba(255,255,255,.9); }
@@ -315,9 +357,36 @@
 <div class="status-bar">
   <div class="wrap status-bar__inner">
     <span class="status-bar__dot" aria-hidden="true"></span>
-    <span>Planering av tomtene er i gang. Bygging av de første boligene starter snart.</span>
+    <span>Planering av tomtene er i gang. Innflytting høst 2026.</span>
   </div>
 </div>
+
+<section class="film-section" id="film">
+  <div class="film-inner">
+    <div class="film-head">
+      <span class="eyebrow">Film</span>
+      <h2 class="h2">Bli kjent med Hamrevann</h2>
+      <p>Et lite innblikk i området, naturen og boligene – ta en titt før du melder interesse.</p>
+    </div>
+    <div class="film-frame">
+      <iframe
+        id="filmVideo"
+        src="about:blank"
+        data-real-src="https://www.youtube-nocookie.com/embed/HzZXGZ_lvQw?autoplay=1&mute=1&controls=0&loop=1&playlist=HzZXGZ_lvQw&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&showinfo=0&enablejsapi=1"
+        title="Hamrevann"
+        allow="autoplay; encrypted-media"
+        tabindex="-1"
+      ></iframe>
+      <div class="film-shield" id="filmShield" aria-hidden="true"></div>
+      <div class="film-mask-tr" aria-hidden="true"></div>
+      <div class="film-mask-br" aria-hidden="true"></div>
+      <button class="film-sound" id="filmSound" aria-label="Slå på lyd">
+        <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
 
 <section class="sec sec--white" id="fordeler">
   <div class="wrap">
@@ -516,11 +585,9 @@
       </div>
       <div class="logo-divider" aria-hidden="true"></div>
       <div class="logo-box">
-        <a href="https://www.eiendomsmeglernorge.no/" target="_blank" rel="noopener noreferrer">
-          <div class="logo-placeholder">
-            <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff16c2b7a6ecd79e27a3f.webp" alt="Eiendomsmegler Norge" style="max-height:40px;max-width:100%;object-fit:contain;display:block;" />
-          </div>
-        </a>
+        <div class="logo-placeholder">
+          <img src="https://assets.cdn.filesafe.space/dm0qyruOPEayjpJ0sC24/media/69dff16c2b7a6ecd79e27a3f.webp" alt="Eiendomsmegler Norge" style="max-height:40px;max-width:100%;object-fit:contain;display:block;" />
+        </div>
         <span class="logo-label">Megler</span>
       </div>
     </div>
@@ -658,6 +725,42 @@
       });
     }, { threshold: 0.1 }).observe(formSec);
   }
+
+  var filmVid    = document.getElementById('filmVideo');
+  var filmShield = document.getElementById('filmShield');
+  var filmSound  = document.getElementById('filmSound');
+  var filmLoaded = false;
+  var filmMuted  = true;
+
+  function loadFilm() {
+    if (filmLoaded || !filmVid) return;
+    filmLoaded = true;
+    filmVid.src = filmVid.dataset.realSrc;
+  }
+
+  function ytCmd(func) {
+    if (!filmVid || !filmVid.contentWindow) return;
+    filmVid.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
+  }
+
+  if (filmVid) {
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries, obs) {
+        if (entries[0].isIntersecting) { loadFilm(); obs.disconnect(); }
+      }, { rootMargin: '200px 0px' }).observe(filmVid);
+    } else {
+      setTimeout(loadFilm, 1500);
+    }
+  }
+
+  function toggleSound() {
+    filmMuted = !filmMuted;
+    ytCmd(filmMuted ? 'mute' : 'unMute');
+    filmSound.classList.toggle('is-on', !filmMuted);
+    filmSound.setAttribute('aria-label', filmMuted ? 'Slå på lyd' : 'Slå av lyd');
+  }
+  if (filmSound) filmSound.addEventListener('click', toggleSound);
+  if (filmShield) filmShield.addEventListener('click', toggleSound);
 
   var hlIframe = document.getElementById('hl-iframe');
   var hlLoaded = false;
