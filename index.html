@@ -791,7 +791,9 @@
     filmLoaded = true;
     filmVid.src = filmVid.dataset.realSrc;
     filmVid.addEventListener('load', function () {
-      try { filmVid.contentWindow.postMessage('{"event":"listening"}', '*'); } catch (_) {}
+      try {
+        filmVid.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'filmVideo', channel: 'widget' }), '*');
+      } catch (_) {}
     }, { once: true });
   }
 
@@ -832,12 +834,13 @@
     if (!filmLoaded) {
       loadFilm();
       if (filmPoster) filmPoster.classList.add('is-hidden');
-      var go = function () { ytCmd('playVideo'); };
+      var go = function () { ytCmd('playVideo'); filmPlaying = true; };
       if (filmVid && filmVid.src && filmVid.src !== 'about:blank') setTimeout(go, 60);
       else filmVid.addEventListener('load', function () { setTimeout(go, 200); }, { once: true });
       return;
     }
-    ytCmd(filmPlaying ? 'pauseVideo' : 'playVideo');
+    if (filmPlaying) { ytCmd('pauseVideo'); filmPlaying = false; }
+    else             { ytCmd('playVideo');  filmPlaying = true;  }
   }
 
   if (filmVid) {
@@ -907,9 +910,15 @@
     if (typeof e.data !== 'string' || e.origin.indexOf('youtube') === -1) return;
     try {
       var d = JSON.parse(e.data);
+      var state = null;
       if (d.event === 'onStateChange') {
-        filmPlaying = (d.info === 1);
-        if (d.info === 1 && filmPoster) filmPoster.classList.add('is-hidden');
+        state = (d.info && typeof d.info === 'object') ? d.info.playerState : d.info;
+      } else if (d.event === 'infoDelivery' && d.info && typeof d.info.playerState === 'number') {
+        state = d.info.playerState;
+      }
+      if (state !== null) {
+        filmPlaying = (state === 1);
+        if (state === 1 && filmPoster) filmPoster.classList.add('is-hidden');
       }
     } catch (_) {}
   });
