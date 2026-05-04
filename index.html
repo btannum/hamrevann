@@ -324,22 +324,39 @@
     .film-shield { position: absolute; inset: 0; cursor: pointer; background: transparent; z-index: 2; }
     .film-mask-tr { position: absolute; top: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
     .film-mask-br { position: absolute; bottom: 0; right: 0; width: 96px; height: 56px; background: transparent; pointer-events: none; z-index: 3; }
-    .film-sound {
-      position: absolute; bottom: 16px; right: 16px; z-index: 4;
+    .film-btn {
+      position: absolute; bottom: 16px; z-index: 4;
       width: 44px; height: 44px; border-radius: 50%; border: none;
       background: rgba(0,0,0,.55); backdrop-filter: blur(6px); color: #fff;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: background .2s, transform .15s;
     }
-    .film-sound:hover { background: rgba(61,107,79,.9); transform: scale(1.06); }
-    .film-sound svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .film-btn:hover { background: rgba(61,107,79,.9); transform: scale(1.06); }
+    .film-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .film-sound { right: 16px; }
+    .film-fs    { right: 70px; }
     .film-sound .icon-on { display: none; }
     .film-sound.is-on .icon-on { display: block; }
     .film-sound.is-on .icon-off { display: none; }
+    .film-fs .icon-exit { display: none; }
+    .film-frame.is-fs .film-fs .icon-exit { display: block; }
+    .film-frame.is-fs .film-fs .icon-enter { display: none; }
+
+    .film-frame.is-expanded {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh; max-width: none;
+      aspect-ratio: auto; border-radius: 0; z-index: 9999;
+      background: #000;
+    }
+    .film-frame:fullscreen { background: #000; border-radius: 0; }
+    .film-frame:-webkit-full-screen { background: #000; border-radius: 0; }
+    body.has-fs-fallback { overflow: hidden; }
     @media (max-width: 520px) {
       .film-section { padding: 56px 14px; }
       .film-frame { border-radius: 8px; }
-      .film-sound { width: 38px; height: 38px; bottom: 10px; right: 10px; }
+      .film-btn  { width: 38px; height: 38px; bottom: 10px; }
+      .film-sound { right: 10px; }
+      .film-fs    { right: 56px; }
       .film-play { width: 64px; height: 64px; }
       .film-play svg { width: 22px; height: 22px; }
     }
@@ -410,7 +427,11 @@
       <div class="film-shield" id="filmShield" aria-hidden="true"></div>
       <div class="film-mask-tr" aria-hidden="true"></div>
       <div class="film-mask-br" aria-hidden="true"></div>
-      <button class="film-sound" id="filmSound" aria-label="Slå på lyd">
+      <button class="film-btn film-fs" id="filmFs" type="button" aria-label="Vis i fullskjerm">
+        <svg class="icon-enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V3h6"/><path d="M21 9V3h-6"/><path d="M3 15v6h6"/><path d="M21 15v6h-6"/></svg>
+        <svg class="icon-exit"  viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v6H3"/><path d="M15 3v6h6"/><path d="M9 21v-6H3"/><path d="M15 21v-6h6"/></svg>
+      </button>
+      <button class="film-btn film-sound" id="filmSound" type="button" aria-label="Slå på lyd">
         <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
         <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
       </button>
@@ -810,8 +831,63 @@
     else document.addEventListener('DOMContentLoaded', loadFilm);
   }
   if (filmPoster) filmPoster.addEventListener('click', startWithSound);
-  if (filmSound)  filmSound.addEventListener('click', toggleSound);
+  if (filmSound)  filmSound.addEventListener('click', function (e) { e.stopPropagation(); toggleSound(); });
   if (filmShield) filmShield.addEventListener('click', toggleSound);
+
+  var filmFs    = document.getElementById('filmFs');
+  var filmFrame = document.querySelector('.film-frame');
+
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement; }
+  function isExpanded() { return filmFrame && filmFrame.classList.contains('is-expanded'); }
+  function fsActive() { return !!fsElement() || isExpanded(); }
+
+  function enterNativeFs() {
+    var req = filmFrame.requestFullscreen || filmFrame.webkitRequestFullscreen;
+    if (!req) return false;
+    try {
+      var p = req.call(filmFrame);
+      if (p && p.catch) p.catch(enterFallbackFs);
+      return true;
+    } catch (_) { return false; }
+  }
+  function enterFallbackFs() {
+    filmFrame.classList.add('is-expanded');
+    document.body.classList.add('has-fs-fallback');
+    syncFsUi();
+  }
+  function exitNativeFs() {
+    var ex = document.exitFullscreen || document.webkitExitFullscreen;
+    if (ex) try { ex.call(document); } catch (_) {}
+  }
+  function exitFallbackFs() {
+    filmFrame.classList.remove('is-expanded');
+    document.body.classList.remove('has-fs-fallback');
+    syncFsUi();
+  }
+  function syncFsUi() {
+    if (!filmFrame) return;
+    filmFrame.classList.toggle('is-fs', fsActive());
+    if (filmFs) filmFs.setAttribute('aria-label', fsActive() ? 'Lukk fullskjerm' : 'Vis i fullskjerm');
+  }
+  function toggleFs() {
+    if (!filmFrame) return;
+    if (fsActive()) {
+      if (fsElement()) exitNativeFs();
+      else exitFallbackFs();
+      return;
+    }
+    if (filmPoster && !filmPoster.classList.contains('is-hidden')) filmPoster.classList.add('is-hidden');
+    loadFilm();
+    setTimeout(function () { ytCmd('playVideo'); }, 60);
+    if (!enterNativeFs()) enterFallbackFs();
+  }
+
+  if (filmFs) filmFs.addEventListener('click', function (e) { e.stopPropagation(); toggleFs(); });
+  document.addEventListener('fullscreenchange', syncFsUi);
+  document.addEventListener('webkitfullscreenchange', syncFsUi);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isExpanded()) exitFallbackFs();
+  });
 
   window.addEventListener('message', function (e) {
     if (typeof e.data !== 'string' || e.origin.indexOf('youtube') === -1) return;
